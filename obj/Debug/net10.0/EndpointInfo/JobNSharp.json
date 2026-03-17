@@ -1,0 +1,207 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "JobNSharp",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/job/crawl": {
+      "post": {
+        "tags": [
+          "Job"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrawlRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrawlRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrawlRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/job/crawl-all": {
+      "post": {
+        "tags": [
+          "Job"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrawlAllRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrawlAllRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CrawlAllRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/sites": {
+      "get": {
+        "tags": [
+          "Site"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CrawlAllRequest": {
+        "required": [
+          "searchTerm"
+        ],
+        "type": "object",
+        "properties": {
+          "searchTerm": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationModel"
+          },
+          "jobType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EJobType"
+            },
+            "nullable": true
+          },
+          "datePosted": {
+            "$ref": "#/components/schemas/EDatePosted"
+          },
+          "remote": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "includeDescription": {
+            "type": "boolean"
+          },
+          "resultWanted": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CrawlRequest": {
+        "required": [
+          "searchTerm",
+          "site"
+        ],
+        "type": "object",
+        "properties": {
+          "searchTerm": {
+            "type": "string",
+            "nullable": true
+          },
+          "location": {
+            "$ref": "#/components/schemas/LocationModel"
+          },
+          "jobType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EJobType"
+            },
+            "nullable": true
+          },
+          "datePosted": {
+            "$ref": "#/components/schemas/EDatePosted"
+          },
+          "remote": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "includeDescription": {
+            "type": "boolean"
+          },
+          "site": {
+            "type": "string",
+            "nullable": true
+          },
+          "resultWanted": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "EDatePosted": {
+        "enum": [
+          "Anytime",
+          "Past24Hours",
+          "PastWeek",
+          "PastMonth"
+        ],
+        "type": "string"
+      },
+      "EJobType": {
+        "enum": [
+          "FullTime",
+          "PartTime",
+          "Contract",
+          "Internship",
+          "Temporary"
+        ],
+        "type": "string"
+      },
+      "LocationModel": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Job"
+    },
+    {
+      "name": "Site"
+    }
+  ]
+}

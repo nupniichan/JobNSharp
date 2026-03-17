@@ -1,0 +1,50 @@
+@JobNSharp_HostAddress = http://localhost:5021
+
+### Get available sites
+GET {{JobNSharp_HostAddress}}/api/sites
+Accept: application/json
+
+### Crawl LinkedIn
+POST {{JobNSharp_HostAddress}}/api/job/crawl
+Content-Type: application/json
+
+{
+  "searchTerm": "software engineer",
+  "location": {
+    "city": "Ho Chi Minh",
+    "country": "Vietnam"
+  },
+  "includeDescription": false,
+  "site": "linkedin",
+  "resultWanted": 10
+}
+
+### Crawl Indeed
+POST {{JobNSharp_HostAddress}}/api/job/crawl
+Content-Type: application/json
+
+{
+  "searchTerm": "software engineer",
+  "location": {
+    "city": "New York",
+    "country": "US"
+  },
+  "jobType": "FullTime",
+  "includeDescription": false,
+  "site": "indeed",
+  "resultWanted": 10
+}
+
+### Crawl all sites
+POST {{JobNSharp_HostAddress}}/api/job/crawl-all
+Content-Type: application/json
+
+{
+  "searchTerm": "software engineer",
+  "location": {
+    "city": "Ho Chi Minh",
+    "country": "Vietnam"
+  },
+  "includeDescription": false,
+  "resultWanted": 10
+}
