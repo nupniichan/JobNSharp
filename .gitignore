@@ -1,0 +1,59 @@
+## .NET / C#
+bin/
+obj/
+publish/
+
+## User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+## VS Code / Cursor
+.vscode/
+.cursor/
+
+## Visual Studio
+.vs/
+*.rsuser
+
+## NuGet
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nupkg
+
+## Build results
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Ll]og/
+[Ll]ogs/
+
+## Test results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+## OS files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
+
+## Secrets / Environment
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+*.env
+.env.*
+
+## Misc
+*.swp
+*.bak
+*.tmp
+*.cache
+project.lock.json
