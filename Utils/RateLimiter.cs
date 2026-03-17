@@ -1,11 +1,7 @@
+using JobNSharp.Interfaces;
 using System.Collections.Concurrent;
 
 namespace JobNSharp.Utils;
-
-public interface IRateLimiter
-{
-    Task<T> ExecuteAsync<T>(string key, Func<Task<T>> action, CancellationToken ct = default);
-}
 
 public class RateLimiter : IRateLimiter
 {

@@ -1,11 +1,7 @@
+using JobNSharp.Interfaces;
 using System.Net;
 
 namespace JobNSharp.Utils;
-
-public interface IProxyService
-{
-    IWebProxy? GetNextProxy();
-}
 
 public class ProxyService : IProxyService
 {
