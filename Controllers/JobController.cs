@@ -8,15 +8,15 @@ namespace JobNSharp.Controllers;
 [Route("api/job")]
 public class JobController(IJobCrawlService crawlService) : ControllerBase
 {
-    [HttpPost("crawl")]
-    public async Task<IActionResult> Crawl([FromBody] CrawlRequest request, CancellationToken ct)
+    [HttpGet("crawl")]
+    public async Task<IActionResult> Crawl([FromQuery] CrawlRequest request, CancellationToken ct)
     {
         var results = await crawlService.CrawlAsync(request, ct);
         return Ok(results);
     }
 
-    [HttpPost("crawl-all")]
-    public async Task<IActionResult> CrawlAll([FromBody] CrawlAllRequest request, CancellationToken ct)
+    [HttpGet("crawl-all")]
+    public async Task<IActionResult> CrawlAll([FromQuery] CrawlAllRequest request, CancellationToken ct)
     {
         var results = await crawlService.CrawlAllAsync(request, ct);
         return Ok(results);
