@@ -4,7 +4,7 @@ namespace JobNSharp.Models;
 
 public class JobResult
 {
-    public string Site { get; set; } = string.Empty;
+    public ESite Site { get; set; }
     public string Title { get; set; } = string.Empty;
     public string Company { get; set; } = string.Empty;
     public LocationModel? Location { get; set; }

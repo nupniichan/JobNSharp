@@ -16,7 +16,7 @@ public class IndeedProvider : IJobProvider
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IRateLimiter _rateLimiter;
 
-    public string SiteName => "indeed";
+    public ESite SiteName => ESite.Indeed;
 
     public IndeedProvider(IHttpClientFactory httpClientFactory, IRateLimiter rateLimiter)
     {
@@ -26,11 +26,11 @@ public class IndeedProvider : IJobProvider
 
     public async Task<List<JobResult>> CrawlAsync(CrawlRequest request, CancellationToken ct = default)
     {
-        return await _rateLimiter.ExecuteAsync(SiteName, async () =>
+        return await _rateLimiter.ExecuteAsync(SiteName.ToString(), async () =>
         {
             var client = _httpClientFactory.CreateClient("IndeedApi");
-            var countryCode = CountryMapper.GetCountryCode(request.Location?.Country);
-            var domain = CountryMapper.GetDomain(request.Location?.Country);
+            var countryCode = CountryMapper.GetCountryCode(request.Country);
+            var domain = CountryMapper.GetDomain(request.Country);
             var results = new List<JobResult>();
             string? cursor = null;
 
@@ -73,12 +73,9 @@ public class IndeedProvider : IJobProvider
         var what = $"what: \"{searchTerm}\"";
 
         var location = "";
-        if (request.Location is not null)
-        {
-            var where = BuildLocationString(request.Location);
-            if (!string.IsNullOrEmpty(where))
-                location = $"location: {{where: \"{where}\", radius: 50, radiusUnit: MILES}}";
-        }
+        var where = BuildLocationString(request.City, request.Country);
+        if (!string.IsNullOrEmpty(where))
+            location = $"location: {{where: \"{where}\", radius: 50, radiusUnit: MILES}}";
 
         var cursorPart = !string.IsNullOrEmpty(cursor) ? $"cursor: \"{cursor}\"" : "";
         var filters = BuildFilters(request);
@@ -192,7 +189,7 @@ public class IndeedProvider : IJobProvider
 
             var jobResult = new JobResult
             {
-                Site = "indeed",
+                Site = ESite.Indeed,
                 Title = title,
                 SourceId = key,
                 JobUrl = $"https://{domain}.indeed.com/viewjob?jk={key}"
@@ -275,11 +272,11 @@ public class IndeedProvider : IJobProvider
         _ => null
     };
 
-    private static string BuildLocationString(LocationModel location)
+    private static string BuildLocationString(string? city, string? country)
     {
         var parts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(location.City)) parts.Add(location.City);
-        if (!string.IsNullOrWhiteSpace(location.Country)) parts.Add(location.Country);
+        if (!string.IsNullOrWhiteSpace(city)) parts.Add(city);
+        if (!string.IsNullOrWhiteSpace(country)) parts.Add(country);
         return string.Join(", ", parts);
     }
 

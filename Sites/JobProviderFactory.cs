@@ -1,26 +1,27 @@
 using JobNSharp.Interfaces;
+using JobNSharp.Models.Enums;
 using JobNSharp.Utils.Exceptions;
 
 namespace JobNSharp.Sites;
 
 public class JobProviderFactory : IJobProviderFactory
 {
-    private readonly Dictionary<string, IJobProvider> _providers;
+    private readonly Dictionary<ESite, IJobProvider> _providers;
 
     public JobProviderFactory(IEnumerable<IJobProvider> providers)
     {
-        _providers = providers.ToDictionary(p => p.SiteName, StringComparer.OrdinalIgnoreCase);
+        _providers = providers.ToDictionary(p => p.SiteName);
     }
 
-    public IJobProvider GetProvider(string siteName)
+    public IJobProvider GetProvider(ESite site)
     {
-        if (!_providers.TryGetValue(siteName, out var provider))
-            throw new CrawlException(siteName, $"Provider '{siteName}' is not supported. Available: {string.Join(", ", _providers.Keys)}");
+        if (!_providers.TryGetValue(site, out var provider))
+            throw new CrawlException(site.ToString(), $"Provider '{site}' is not supported. Available: {string.Join(", ", _providers.Keys)}");
 
         return provider;
     }
 
-    public IReadOnlyList<string> GetAvailableSites() => _providers.Keys.ToList();
+    public IReadOnlyList<ESite> GetAvailableSites() => _providers.Keys.ToList();
 
     public IReadOnlyList<IJobProvider> GetAllProviders() => _providers.Values.ToList();
 }

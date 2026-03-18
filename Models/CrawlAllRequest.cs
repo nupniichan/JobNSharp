@@ -5,17 +5,19 @@ namespace JobNSharp.Models;
 public class CrawlAllRequest
 {
     public required string SearchTerm { get; set; }
-    public LocationModel? Location { get; set; }
+    public string? City { get; set; }
+    public string? Country { get; set; }
     public List<EJobType>? JobType { get; set; }
     public EDatePosted? DatePosted { get; set; }
     public bool? Remote { get; set; }
     public bool IncludeDescription { get; set; }
     public int ResultWanted { get; set; } = 10;
 
-    public CrawlRequest ToCrawlRequest(string site) => new()
+    public CrawlRequest ToCrawlRequest(ESite site) => new()
     {
         SearchTerm = SearchTerm,
-        Location = Location,
+        City = City,
+        Country = Country,
         JobType = JobType,
         DatePosted = DatePosted,
         Remote = Remote,

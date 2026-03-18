@@ -16,7 +16,7 @@ public partial class LinkedInProvider : IJobProvider
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IRateLimiter _rateLimiter;
 
-    public string SiteName => "linkedin";
+    public ESite SiteName => ESite.LinkedIn;
 
     public LinkedInProvider(IHttpClientFactory httpClientFactory, IRateLimiter rateLimiter)
     {
@@ -26,7 +26,7 @@ public partial class LinkedInProvider : IJobProvider
 
     public async Task<List<JobResult>> CrawlAsync(CrawlRequest request, CancellationToken ct = default)
     {
-        return await _rateLimiter.ExecuteAsync(SiteName, async () =>
+        return await _rateLimiter.ExecuteAsync(SiteName.ToString(), async () =>
         {
             var client = _httpClientFactory.CreateClient("JobCrawler");
             var results = new List<JobResult>();
@@ -65,7 +65,7 @@ public partial class LinkedInProvider : IJobProvider
 
     private static string BuildUrl(CrawlRequest request, int start)
     {
-        var location = BuildLocation(request.Location);
+        var location = BuildLocation(request.City, request.Country);
 
         var url = $"{BaseUrl}?keywords={Uri.EscapeDataString(request.SearchTerm)}" +
                   $"&location={Uri.EscapeDataString(location)}" +
@@ -83,13 +83,11 @@ public partial class LinkedInProvider : IJobProvider
         return url;
     }
 
-    private static string BuildLocation(LocationModel? location)
+    private static string BuildLocation(string? city, string? country)
     {
-        if (location is null) return string.Empty;
-
         var parts = new List<string>();
-        if (!string.IsNullOrWhiteSpace(location.City)) parts.Add(location.City);
-        if (!string.IsNullOrWhiteSpace(location.Country)) parts.Add(location.Country);
+        if (!string.IsNullOrWhiteSpace(city)) parts.Add(city);
+        if (!string.IsNullOrWhiteSpace(country)) parts.Add(country);
         return string.Join(", ", parts);
     }
 
@@ -127,7 +125,7 @@ public partial class LinkedInProvider : IJobProvider
 
             var job = new JobResult
             {
-                Site = "linkedin",
+                Site = ESite.LinkedIn,
                 Title = WebUtility.HtmlDecode(title),
                 Company = WebUtility.HtmlDecode(Extract(CompanyRegex(), chunk)),
                 JobUrl = CleanUrl(Extract(JobUrlRegex(), chunk)),
