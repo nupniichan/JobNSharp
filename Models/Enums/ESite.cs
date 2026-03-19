@@ -6,5 +6,6 @@ namespace JobNSharp.Models.Enums;
 public enum ESite
 {
     LinkedIn,
-    Indeed
+    Indeed,
+    Glassdoor
 }

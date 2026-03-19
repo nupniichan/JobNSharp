@@ -75,8 +75,43 @@ builder.Services.AddHttpClient("IndeedApi", client =>
 .AddPolicyHandler(GetRetryPolicy())
 .AddPolicyHandler(GetCircuitBreakerPolicy());
 
+builder.Services.AddHttpClient("GlassdoorApi", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+    client.DefaultRequestHeaders.Accept.ParseAdd("*/*");
+    client.DefaultRequestHeaders.AcceptLanguage.ParseAdd("en-US,en;q=0.9");
+    client.DefaultRequestHeaders.UserAgent.ParseAdd(
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36");
+    client.DefaultRequestHeaders.Add("apollographql-client-name", "job-search-next");
+    client.DefaultRequestHeaders.Add("apollographql-client-version", "4.65.5");
+    client.DefaultRequestHeaders.Add("origin", "https://www.glassdoor.com");
+    client.DefaultRequestHeaders.Add("referer", "https://www.glassdoor.com/");
+    client.DefaultRequestHeaders.Add("sec-ch-ua", "\"Chromium\";v=\"118\", \"Google Chrome\";v=\"118\", \"Not=A?Brand\";v=\"99\"");
+    client.DefaultRequestHeaders.Add("sec-ch-ua-mobile", "?0");
+    client.DefaultRequestHeaders.Add("sec-ch-ua-platform", "\"macOS\"");
+    client.DefaultRequestHeaders.Add("sec-fetch-dest", "empty");
+    client.DefaultRequestHeaders.Add("sec-fetch-mode", "cors");
+    client.DefaultRequestHeaders.Add("sec-fetch-site", "same-origin");
+})
+.ConfigurePrimaryHttpMessageHandler(sp =>
+{
+    var proxyService = sp.GetRequiredService<IProxyService>();
+    var handler = new SocketsHttpHandler
+    {
+        AutomaticDecompression = DecompressionMethods.All,
+        PooledConnectionLifetime = TimeSpan.FromMinutes(2)
+    };
+    var proxy = proxyService.GetNextProxy();
+    if (proxy != null) handler.Proxy = proxy;
+    return handler;
+})
+.SetHandlerLifetime(TimeSpan.FromMinutes(1))
+.AddPolicyHandler(GetRetryPolicy())
+.AddPolicyHandler(GetCircuitBreakerPolicy());
+
 builder.Services.AddSingleton<IJobProvider, LinkedInProvider>();
 builder.Services.AddSingleton<IJobProvider, IndeedProvider>();
+builder.Services.AddSingleton<IJobProvider, GlassdoorProvider>();
 builder.Services.AddSingleton<IJobProviderFactory, JobProviderFactory>();
 builder.Services.AddScoped<IJobCrawlService, JobCrawlService>();
 
