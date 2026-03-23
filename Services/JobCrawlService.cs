@@ -19,7 +19,7 @@ public class JobCrawlService(IJobProviderFactory factory, ILogger<JobCrawlServic
 
         var tasks = providers.Select(p => CrawlSafeAsync(p, request.ToCrawlRequest(p.SiteName), ct));
         var results = await Task.WhenAll(tasks);
-        return results.SelectMany(r => r).ToList();
+        return results.SelectMany(r => r.Take(request.ResultWanted)).ToList();
     }
 
     private async Task<List<JobResult>> CrawlSafeAsync(IJobProvider provider, CrawlRequest request, CancellationToken ct)
